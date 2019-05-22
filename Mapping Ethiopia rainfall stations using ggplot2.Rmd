@@ -1,0 +1,50 @@
+---
+title: "Mapping Ethiopia rainfall stations using ggplot2"
+---
+
+```{r # station import}
+library(readxl)
+Ethiopian_stations <- read_excel("C:/Users/yassmin/Dropbox/PhD Thesis & Analysis/My PhD R work/Excel Data/Ethiopian stations.xlsx",
+skip = 3)
+View(Ethiopian_stations)
+fix(Ethiopian_stations)
+```
+
+```{r # Plot Ethiopia map}
+library(ggmap)
+library(sp)
+library(raster)
+library(raster)
+adm1 <- getData('GADM', country='ETH', level=0)
+adm2 <- getData('GADM', country='ETH', level=1)
+library(ggplot2)
+fadm1 = fortify(adm1)
+fadm2 = fortify(adm2, region = "NAME_1")
+
+bgMap = get_map(location=c(lon = mean(TRMMdata9816w$lon), lat =mean(TRMMdata9816w$lat)), source = "google", zoom = 6)
+par(mar = rep(0,4))
+merc = CRS("+init=epsg:3857")
+adm1 <- fortify(adm2)
+library(ggmap)
+pp=ggmap(bgMap)+  
+  geom_map(data = adm1, map = adm1, aes(x = long, y = lat, map_id = id, group = group), fill = NA, colour = "orange") + geom_point(data =pakistan.adm2.centroids.df, aes(x = long, y = lat), colour = "blue", alpha = .5) + scale_size(range = c(1, 5))+ labs(x = "Longitude",y = "Latitude")
+pp
+pp+geom_text(data = pakistan.adm2.centroids.df, aes(label = NAME_1, x = long, y=lat, group = NAME_1), size =3, colour = "Blue", vjust = 1)
+
+
+pdf("Ethiopianstations.pdf")# is supposed to copy the plot in pdf
+                                         # under the name 
+dev.off() 
+```
+
+
+
+```{r # Ethiopia rainfall station}
+gg <- gg +geom_point(data=Ethiopian_stations, aes(x=Longitude,y=Latitude), colour = "blue", size = 0.5, alpha = 0.0001)
+gg+ scale_x_continuous("Longitude") +
+  scale_y_continuous("latitude")
+gg
+
+```
+
+
